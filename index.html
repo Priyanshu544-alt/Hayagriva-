@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Auth System</title>
+
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- Enhanced Animated Background -->
+    <div class="background-animation">
+        <div class="geometric-bg">
+
+            <!-- Floating Orbs -->
+            <div class="floating-orb orb-1"></div>
+            <div class="floating-orb orb-2"></div>
+            <div class="floating-orb orb-3"></div>
+
+            <!-- Grid Pattern -->
+            <div class="grid-pattern"></div>
+
+            <!-- Additional Floating Shapes -->
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+            <div class="floating-shape shape-4"></div>
+
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p id="loadingMessage">Loading...</p>
+    </div>
+
+    <!-- Main container -->
+    <div class="container">
+
+        <!-- Sign up form -->
+        <div class="form-container" id="signupContainer">
+            <div class="form-header">
+                <h2>Create Account</h2>
+                <p>Join our platform with secure authentication</p>
+            </div>
+
+            <!-- Sign up fields -->
+            <form class="auth-form" id="signupForm">
+                <div class="input-group">
+                    <input type="text" id="fullName" placeholder="Full Name" required />
+                    <span class="input-focus"></span>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Username" required />
+                    <span class="input-focus"></span>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Email Address" required />
+                    <span class="input-focus"></span>
+                </div>
+
+                <div class="input-group">
+                    <input type="tel" id="phone" placeholder="Phone Number" />
+                    <span class="input-focus"></span>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="newPassword" placeholder="Create Password" required />
+                    <span class="input-focus"></span>
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+                    <span class="input-focus"></span>
+                    <div class="password-match" id="passwordMatch"></div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="signupSubmitBtn" disabled>
+                    Continue to Verification
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <p>
+                    Already have an account?
+                    <a href="#" id="showLogin">Sign In</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- OTP Verification (Signup) -->
+        <div class="form-container hidden" id="signupOtpContainer">
+            <div class="form-header">
+                <h2>Verify Your Email</h2>
+                <p id="otpMessage">Enter the 6-digit code sent to your email</p>
+            </div>
+
+            <form class="auth-form" id="signupOtpForm">
+                <div class="otp-input-group">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                </div>
+
+                <div class="timer-container">
+                    <span>Code expires in:</span>
+                    <span id="otpTimer">02:00</span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="verifyOtpBtn">
+                    Verify Code
+                </button>
+
+                <!-- Success Animation -->
+                <div class="success-animation hidden" id="successAnimation">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="checkmark-check" fill="none" d="M14 27l7 7 16-16" />
+                    </svg>
+                </div>
+
+                <!-- Register Button (Initially Hidden) -->
+                <button type="button" class="submit-btn register-btn hidden" id="registerBtn">
+                    Complete Registration
+                </button>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button type="button" class="resend-btn" id="resendOtp" disabled>
+                        Resend Code
+                    </button>
+                </div>
+            </form>
+
+            <div class="form-footer">
+                <p><a href="#" id="backToSignup">Back to Signup</a></p>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container hidden" id="loginContainer">
+            <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to your account securely</p>
+            </div>
+
+            <form class="auth-form" id="loginForm">
+                <div class="input-group">
+                    <input type="text" id="loginUsername" placeholder="Username or Email" required />
+                    <span class="input-focus"></span>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required />
+                    <span class="input-focus"></span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="loginSubmitBtn">
+                    Continue to Verification
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <p>
+                    Don't have an account?
+                    <a href="#" id="showSignup">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- OTP Verification (Login) -->
+        <div class="form-container hidden" id="loginOtpContainer">
+            <div class="form-header">
+                <h2>Secure Login</h2>
+                <p>Enter the verification code sent to your email</p>
+            </div>
+
+            <form class="auth-form" id="loginOtpForm">
+                <div class="otp-input-group">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" />
+                </div>
+
+                <div class="timer-container">
+                    <span>Code expires in:</span>
+                    <span id="loginOtpTimer">02:00</span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="verifyLoginOtpBtn">
+                    Sign In
+                </button>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button type="button" class="resend-btn" id="resendLoginOtp" disabled>
+                        Resend Code
+                    </button>
+                </div>
+            </form>
+
+            <div class="form-footer">
+                <p><a href="#" id="backToLogin">Back to Login</a></p>
+            </div>
+        </div>
+
+        <!-- Welcome Page -->
+        <div class="form-container hidden" id="welcomeContainer">
+            <div class="welcome-content">
+                <h1 class="welcome-title" id="welcomeTitle">Welcome!</h1>
+                <p class="welcome-subtitle">You have successfully logged in to your account.</p>
+                <button class="submit-btn" id="logoutBtn">Sign Out</button>
+            </div>
+        </div>
+
+    </div> <!-- /.container -->
+
+    <script src="script.js"></script>
+</body>
+
+</html>
