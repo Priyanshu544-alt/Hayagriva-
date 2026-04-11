@@ -9,6 +9,8 @@ let currentOTP = '';
 let otpTimer = null;
 
 let otpTimeLeft = 120; // 2 minutes in seconds
+let resendAttempts = 0;
+const MAX_RESEND = 3;
 
 // API Base URL Change this to your backend URL
 
@@ -33,7 +35,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     setupOTPInputs();
 
-    showSignupForm();
+    const savedUser = localStorage.getItem('userData');
+
+    if (savedUser) {
+        userData = JSON.parse(savedUser);
+    }
+
+    // Check login state
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (isLoggedIn === 'true') {
+        showWelcomePage(userData.fullName);
+    } else {
+        showSignupForm();
+    }
 
 });
 // Event Listeners Setup
@@ -395,3 +410,583 @@ function showSuccessAnimation() {
     }, 1000);
 
 }
+
+// Form Navigation Functions with CSS Animations
+
+function showSignupForm() {
+
+    hideAllContainers();
+
+    signupContainer.classList.remove('hidden');
+
+    resetForms();
+    resendAttempts = 0;
+
+
+    // CSS fade-in animation
+
+    signupContainer.style.opacity = '0';
+
+    signupContainer.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+
+        signupContainer.style.transition = 'all 0.3s ease';
+
+        signupContainer.style.opacity = '1';
+
+        signupContainer.style.transform = 'translateY(0)';
+
+    }, 10);
+
+}
+
+function showSignupOTPForm() {
+
+    hideAllContainers();
+
+    signupOtpContainer.classList.remove('hidden');
+
+    startOTPTimer('otpTimer');
+    clearOTPInputs();
+
+    // CSS fade-in animation
+
+    signupOtpContainer.style.opacity = '0';
+
+    signupOtpContainer.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+
+        signupOtpContainer.style.transition = 'all 0.3s ease';
+
+        signupOtpContainer.style.opacity = '1';
+
+        signupOtpContainer.style.transform = 'translateY(0)';
+
+    }, 10);
+
+}
+
+function showLoginForm() {
+
+    hideAllContainers();
+
+    loginContainer.classList.remove('hidden');
+
+    resetForms();
+    resendAttempts = 0;
+
+    // CSS fade-in animation
+
+    loginContainer.style.opacity = '0';
+
+    loginContainer.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+
+        loginContainer.style.transition = 'all 0.3s ease';
+
+        loginContainer.style.opacity = '1';
+
+        loginContainer.style.transform = 'translateY(0)';
+
+    }, 10);
+
+}
+
+function showLoginOTPForm() {
+
+    hideAllContainers();
+
+    loginOtpContainer.classList.remove('hidden');
+
+    startOTPTimer('loginOtpTimer');
+
+    clearOTPInputs();
+
+    // CSS fade-in animation
+
+    loginOtpContainer.style.opacity = '0';
+
+    loginOtpContainer.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+
+        loginOtpContainer.style.transition = 'all 0.3s ease';
+
+        loginOtpContainer.style.opacity = '1';
+
+        loginOtpContainer.style.transform = 'translateY(0)';
+
+    }, 10);
+
+}
+
+function showWelcomePage(name) {
+
+    hideAllContainers();
+
+    welcomeContainer.classList.remove('hidden');
+
+    const welcomeTitle = document.getElementById('welcomeTitle');
+
+    welcomeTitle.textContent = `Welcome, ${name}!`;
+    // CSS typewriter animation
+
+    welcomeTitle.style.width = '0';
+
+    welcomeTitle.style.animation = 'none';
+
+    setTimeout(() => {
+
+        welcomeTitle.style.animation = 'typewriter 2s steps(20) forwards';
+    }, 100);
+    // CSS fade-in animation for container
+
+    welcomeContainer.style.opacity = '0';
+
+    welcomeContainer.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+        welcomeContainer.style.transition = 'all 0.3s ease';
+
+        welcomeContainer.style.opacity = '1';
+
+        welcomeContainer.style.transform = 'translateY(0)';
+
+    }, 10);
+}
+
+function hideAllContainers() {
+    [signupContainer, signupOtpContainer, loginContainer, loginOtpContainer, welcomeContainer].forEach(container => {
+        container.classList.add('hidden');
+    });
+}
+
+// Reset Forms
+
+function resetForms() {
+
+    document.querySelectorAll('form').forEach(form => form.reset());
+
+    document.querySelectorAll('.otp-input').forEach(input => {
+
+        input.value = '';
+
+        input.classList.remove('filled');
+
+    });
+    document.getElementById('passwordStrength').className = 'password-strength';
+
+    document.getElementById('passwordMatch').textContent = '';
+
+    document.getElementById('successAnimation').classList.add('hidden');
+
+    document.getElementById('registerBtn').classList.add('hidden');
+
+    clearInterval(otpTimer);
+
+}
+
+// Clear OTP Inputs
+
+function clearOTPInputs() {
+
+    document.querySelectorAll('.otp-input').forEach(input => { 
+        input.value = ''; 
+        input.classList.remove('filled'); 
+    });
+}
+
+//OTP Timer Functions
+function startOTPTimer(timerId) {
+    otpTimeLeft = 120;
+    const timerElement = document.getElementById(timerId);
+    const resendBtn = timerId === 'otpTimer' ?
+        document.getElementById('resendOtp') :
+        document.getElementById('resendLoginOtp');
+    resendBtn.disabled = true;
+    otpTimer = setInterval(() => {
+        const minutes = Math.floor(otpTimeLeft / 60); // how many minute you want timer
+        const seconds = otpTimeLeft % 60; // how many seconds you want timer
+        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        if(otpTimeLeft <= 0) {
+            clearInterval(otpTimer);
+            timerElement.textContent = 'Expired';
+            timerElement.parentElement.classList.add('expired');
+            resendBtn.disabled = false;
+            currentOTP = '';
+        }
+
+        otpTimeLeft--;
+    }, 1000);
+}
+
+// API Call Functions
+
+async function sendOTPEmail(email, type = 'signup') {
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/send-otp`, {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type': 'application/json',
+
+            },
+
+            body: JSON.stringify({ email, type })
+
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+
+            currentOTP = data.otp;
+
+            console.log('OTP sent to email:', email);
+
+            console.log('Generated OTP:', currentOTP); // For testing
+
+            return { success: true, otp: data.otp };
+        } else {
+
+            throw new Error(data.message || 'Failed to send OTP');
+
+        }
+
+    } catch (error) {
+
+        console.error('Error sending OTP:', error);
+
+        return { success: false, error: error.message };
+
+    }
+
+}
+
+//Signup submit handler
+async function handleSignupSubmit(e) {
+    e.preventDefault();
+
+    //store user data
+    userData = {
+        fullName: document.getElementById('fullName').value.trim(),
+        username: document.getElementById('username').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        password: document.getElementById('newPassword').value
+    };
+
+    showLoading('Sending OTP to your email...');
+
+    //Send OTP
+    const result = await sendOTPEmail(userData.email, 'signup');
+
+    hideLoading();
+
+    if (result.success) {
+        document.getElementById('otpMessage').textContent = 
+            `Enter the 6-digit code sent to ${userData.email}`;
+        showSignupOTPForm();
+    }
+    else {
+        alert('Failed to send OTP: ' + result.error);
+    }
+}
+
+//Signup OTP verification handler
+async function handleSignupOTPVerification(e) {
+    e.preventDefault();
+
+    const otpInputs = document.querySelectorAll('#signupOtpContainer .otp-input');
+    const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
+
+    if (enteredOTP.length !== 6) {
+        alert('Please enter a complete 6-digit OTP');
+        return;
+    }
+
+    showLoading('Verifying OTP...');
+
+    const result = await verifyOTPWithServer(userData.email, enteredOTP, 'signup');
+
+    hideLoading();
+
+    if (result.success) {
+        clearInterval(otpTimer);
+        showSuccessAnimation();
+        document.getElementById('verifyOtpBtn').disabled = true;
+        document.getElementById('verifyOtpBtn').textContent = 'Verified';
+    } else {
+        alert(result.message);
+        clearOTPInputs();
+    }
+}
+
+//registration handler
+async function handleRegistration(e) {
+    e.preventDefault();
+
+    showLoading('Completing registration...');
+
+    const response = await fetch(`${API_BASE_URL}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+    });
+
+    const result = await response.json();
+    hideLoading();
+
+    if (result.success) {
+        alert('Registration successful!');
+        showLoginForm();
+    } else {
+        alert(result.message);
+    }
+}
+
+// Login Submit Handler
+
+async function handleLoginSubmit(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+        // Verify login data
+        const response = await fetch(`${API_BASE_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            hideLoading();
+            alert('Invalid username or password');
+            return;
+        }
+
+        //Store user (safe data only)
+        userData = result.user;
+
+        localStorage.setItem('currentUser', userData.username);
+
+        //Send OTP
+        showLoading('Sending OTP...');
+
+        const otpResult = await sendOTPEmail(userData.email, 'login');
+
+        hideLoading();
+
+        if (otpResult.success) {
+            showLoginOTPForm();
+        } else {
+            alert('Failed to send OTP: ' + otpResult.error);
+        }
+
+    } catch (error) {
+        hideLoading();
+        console.error(error);
+        alert('Login failed. Please try again.');
+    }
+}
+
+// Login OTP Verification Handler
+
+async function handleLoginOTPVerification(e) {
+
+e.preventDefault();
+
+const otpInputs = document.querySelectorAll('#loginOtpContainer .otp-input');
+
+const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
+
+if (enteredOTP.length !==6) {
+
+alert('Please enter a complete 6-digit OTP');
+
+return;
+
+}
+
+showLoading('Verifying login...');
+
+const result = await verifyOTPWithServer(userData.email, enteredOTP, 'login');
+
+hideLoading();
+
+if (result.success) { 
+    clearInterval(otpTimer); 
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('currentUser', userData.username);
+    showWelcomePage(userData.fullName); 
+} else {
+    alert(result.message);
+    clearOTPInputs();
+}
+
+}
+
+async function verifyOTPWithServer(email, otp, type) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/verify-otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, otp, type })
+        });
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error('OTP verification error:', error);
+        return { success: false, message: 'Server error' };
+    }
+}
+
+// Resend OTP Handler
+
+async function resendOTP(type) {
+
+    
+    const email = userData.email;
+
+    if (!email) {
+        alert('Email not found. Please restart the process.');
+        return;
+    }
+    
+    if (resendAttempts <= MAX_RESEND) {
+    
+
+        showLoading('Resending OTP...');
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/send-otp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            body: JSON.stringify({ email, type }) 
+        });
+
+        const result = await response.json();
+        hideLoading();
+
+        if (result.success) {
+
+            resendAttempts++; 
+            currentOTP = result.otp;
+            const timerId = type === 'signup' ? 'otpTimer' : 'loginOtpTimer';
+            startOTPTimer(timerId);
+            clearOTPInputs();
+
+            alert(` OTP resent (${resendAttempts}/3 attempt)`);
+
+            } else {
+            alert(result.message);
+            }
+
+            } catch (error) {
+            hideLoading();
+            alert('Error resending OTP');
+            console.error(error);
+        }
+    }
+    else{
+                disableResendButton(type);
+    }
+}
+
+function disableResendButton(type) {
+
+    const btn = type === 'signup'
+        ? document.getElementById('resendOtp')
+        : document.getElementById('resendLoginOtp');
+
+    btn.disabled = true;
+    btn.textContent = "Try again after 15 min";
+
+    setTimeout(() => {
+        resendAttempts = 0;
+        btn.disabled = false;
+        btn.textContent = "Resend Code";
+    }, 15 * 60 * 1000);
+}
+
+//logout handler
+function handleLogout() {
+    userData = {};
+    currentOTP = '';
+    clearInterval(otpTimer);
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('currentUser');
+    showLoginForm();
+}
+
+//utility functions
+
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+//error handling
+window.addEventListener('error', function(e) {
+    console.error('Javascript Error:', e.error);
+    hideLoading();
+});
+
+// API Error Fallback (if backend is not running)
+
+window.addEventListener('unhandledrejection', function(e) {
+
+    console.error('Network Error:', e.reason);
+
+    hideLoading();
+
+    if (e.reason.message && e.reason.message.includes('fetch')) {
+
+        // Fallback to console logging if backend is not available
+        console.warn('Backend not available, using console OTP method');
+
+        // Override sendOTPEmail for local testing
+
+        window.sendOTPEmailFallback = function(email, type) {
+
+            return new Promise((resolve) => {
+
+                setTimeout(() => {
+
+                    const otp = generateOTP();
+console.log(`
+╔══════════════════════════════════════╗
+║              OTP VERIFICATION         ║
+╠══════════════════════════════════════╣
+║ Email: ${email.padEnd(25)} ║
+║ Type:  ${type.padEnd(25)} ║
+║ OTP:   ${otp.padEnd(25)} ║
+╚══════════════════════════════════════╝
+                    `);
+                    resolve({ success: true, otp});
+                }, 1000);
+            });
+        };
+        
+        //replace the API call
+        if (typeof sendOTPEmail !== 'undefined') {
+            window.originalSendOTPEmail = sendOTPEmail;
+            window.sendOTPEmail = sendOTPEmailFallback;
+        }
+    }
+});
