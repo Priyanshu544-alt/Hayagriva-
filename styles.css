@@ -437,6 +437,9 @@ text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);}
     font-family: 'Inter', sans-serif;
 
     letter-spacing: 0.5px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
 
 }
 
@@ -601,6 +604,11 @@ animation: successBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 /*Enhanced welcome Page*/
 .welcome-content {
     text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* adds space between buttons */
 }
 
 .welcome-title {
