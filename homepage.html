@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="homepage_styles.css" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+<!-- BACKGROUND -->
+<div class="background-animation">
+  <div class="geometric-bg">
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    <div class="grid-pattern"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h2>Upload Files:</h2>
+
+    <div>
+      <button class="btn outline" onclick="handleLogout()" style="font-size: medium;">Logout</button>
+      <button class="btn primary" onclick="toggleProfile()" style="font-size: medium;">My Profile</button>
+    </div>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="upload-box">
+    <input type="file" id="fileInput" hidden />
+    <button class="btn upload" onclick="triggerUpload()" style="color: white;">Upload Files</button> <br />
+    <p style="color:white; margin-top: 10px;">
+  We support .pdf, .docx, .txt, .csv, images(.jpeg, .png, .gif, .webp), video(.mp4, .webm, .ogg) files
+</p>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls hidden" id="controls">
+    <input type="text" id="searchInput" placeholder="Search file..." />
+    <button onclick="sortFiles()" class="btn small">Sort</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrapper hidden" id="tableWrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>File Name</th>
+          <th>Date Uploaded</th>
+          <th>Timestamp</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- PROFILE PANEL -->
+<div id="profilePanel" class="profile-panel hidden">
+  <h3 class="profile-title">👤 My Profile</h3>
+
+  <div class="profile-item">
+    <span>Name:</span>
+    <strong id="profileName"></strong>
+  </div>
+
+  <div class="profile-item">
+    <span>Username:</span>
+    <strong id="profileUsername"></strong>
+  </div>
+
+  <div class="profile-item">
+    <span>Email:</span>
+    <strong id="profileEmail"></strong>
+  </div>
+
+  <div class="profile-item">
+    <span>Mobile:</span>
+    <strong id="profilePhone"></strong>
+    <button id="addPhoneBtn" class="btn small hidden">Add Mobile</button>
+  </div>
+</div>
+
+</div>
+<!-- FILE PREVIEW MODAL -->
+<div id="pdfModal" class="hidden" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+">
+
+  <div style="
+    background: #fff;
+    padding: 20px;
+    width: 80%;
+    max-height: 90%;
+    overflow: auto;
+    border-radius: 10px;
+    position: relative;
+  ">
+
+    <!-- CLOSE BUTTON -->
+    <button onclick="closePDF()" style="
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: red;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+    ">X</button>
+
+    <!-- PDF VIEW -->
+    <iframe id="pdfViewer" style="width:100%; height:500px; display:none;"></iframe>
+
+    <!-- IMAGE VIEW -->
+    <img id="imageViewer" style="max-width:100%; display:none;" />
+
+    <!-- VIDEO VIEW -->
+    <video id="videoViewer" style="width:100%; display:none;" controls></video>
+
+  </div>
+</div>
+
+<script src="homepage_script.js"></script>
+</body>
+</html>
