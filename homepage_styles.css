@@ -1,0 +1,211 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* VARIABLES */
+:root {
+  --primary-gradient: linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899);
+}
+
+/* BODY */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0f0f23;
+  color: white;
+}
+
+/* BACKGROUND (SAME AS YOURS) */
+.background-animation {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: float 15s infinite;
+  z-index: 0;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle,#6366f1,transparent);
+}
+
+.orb-2 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle,#8b5cf6,transparent);
+  right: 0;
+}
+
+.orb-3 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle,#ec4899,transparent);
+  bottom: 0;
+}
+
+.grid-pattern {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 1;
+}
+.geometric-bg::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, rgba(99,102,241,0.15), transparent 60%);
+  pointer-events: none;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: rgba(15, 15, 35, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* BUTTON */
+.btn {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.small {
+  padding: 5px 10px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.btn.danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn.primary {
+  background: #6366f1;
+  color: white;
+}
+
+.btn.outline {
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+}
+
+.upload {
+  background: #8b5cf6;
+}
+
+/* PDF MODAL */
+.pdf-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.pdf-content {
+  width: 80%;
+  height: 80%;
+  background: #111;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pdf-content iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+}
+
+.controls input {
+  padding: 8px;
+  width: 60%;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table tr:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid #6366f1;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+
+
+/* HIDDEN */
+.hidden {
+  display: none !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
